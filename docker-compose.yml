@@ -1,0 +1,32 @@
+version: '3' 
+services:
+  nginx:
+    image: nginx:latest
+    ports: 
+      - 8001:8000
+      - 8433:443
+    volumes: 
+      - app:/var/www/html
+      - ./config/site.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - php-db
+    depends_on:
+      - mysql
+  php-db:
+    build: php/.
+   # image: php:7.4-
+    volumes:
+      - app:/var/www/html
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    environment:
+      - EMAIL=admin@admin.com
+      - LOGINPASSWD=admin
+  mysql:
+    image: mariadb:latest
+    environment:
+      - MARIADB_ROOT_PASSWORD=azpanel
+volumes:
+  app:
